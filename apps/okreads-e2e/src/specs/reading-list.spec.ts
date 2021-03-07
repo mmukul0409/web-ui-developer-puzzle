@@ -37,7 +37,7 @@ describe('When: I select the want to read button', () => {
     const itemsCount = await bookItems.count();
     let selectedBookElement = 0;
 
-    for (let i = 0; i < itemsCount; i) {
+    for (let i = 0; i < itemsCount; i++) {
       const bookItem = await bookItems.get(i);
       const addBtn = await bookItem.$('button[ng-reflect-disabled="false"]');
 
