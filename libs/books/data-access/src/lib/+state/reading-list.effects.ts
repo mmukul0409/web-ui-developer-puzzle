@@ -31,7 +31,10 @@ export class ReadingListEffects implements OnInitEffects {
 
   addBook$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ReadingListActions.addToReadingList),
+      ofType(
+        ReadingListActions.addToReadingList,
+        ReadingListActions.undoRemoveFromReadingList
+      ),
       optimisticUpdate({
         run: ({ book }) => {
           return this.http.post('/api/reading-list', book).pipe(
@@ -53,7 +56,10 @@ export class ReadingListEffects implements OnInitEffects {
 
   removeBook$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ReadingListActions.removeFromReadingList),
+      ofType(
+        ReadingListActions.removeFromReadingList,
+        ReadingListActions.undoAddToReadingList
+      ),
       optimisticUpdate({
         run: ({ item }) => {
           return this.http.delete(`/api/reading-list/${item.bookId}`).pipe(
