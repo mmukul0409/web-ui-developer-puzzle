@@ -6,8 +6,10 @@
         <div>
           <button
             data-testing="toggle-reading-list"
+            class="reading_list_button"
             mat-button
             (click)="drawer.toggle()"
+            aria-label="Reading List"
           >
             Reading List
             <tmo-total-count></tmo-total-count>
