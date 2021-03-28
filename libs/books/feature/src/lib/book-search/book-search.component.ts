@@ -39,7 +39,7 @@ export class BookSearchComponent implements OnInit {
     this.searchForm
       .get('term')
       .valueChanges.pipe(debounceTime(500))
-      .subscribe(value => {
+      .subscribe(() => {
         this.searchBooks();
       });
   }
