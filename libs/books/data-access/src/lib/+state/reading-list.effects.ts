@@ -73,45 +73,95 @@ export class ReadingListEffects implements OnInitEffects {
     )
   );
 
-  updateMarkAsFinished$ = createEffect(() =>
+  markAsFinished$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        ReadingListActions.updateMarkAsFinished,
-        ReadingListActions.undoUpdateMarkAsFinished
-      ),
+      ofType(ReadingListActions.MarkAsFinished),
       optimisticUpdate({
         run: ({ item }) => {
-          item = {
-            ...item,
-            finished: !item.finished,
-            finishedDate: new Date().toISOString()
-          };
           return this.http
             .put(`/api/reading-list/${item.bookId}/finished`, item)
             .pipe(
               map(() => {
-                var updatedItem = {
-                  id: item.bookId,
-                  changes: {
-                    ...item
-                  }
-                };
-                return ReadingListActions.confirmedUpdateMarkAsFinished({
-                  item: updatedItem
+                return ReadingListActions.confirmedMarkAsFinished({
+                  showSnackBar: true
                 });
               })
             );
         },
         undoAction: ({ item }) => {
-          var updatedItem = {
-            id: item.bookId,
-            changes: {
-              ...item,
-              finished: !item.finished
-            }
-          };
-          return ReadingListActions.failedUpdateMarkAsFinished({
-            item: updatedItem
+          return ReadingListActions.failedMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  removeMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.RemoveMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedRemoveMarkAsFinished({
+                  showSnackBar: true
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedRemoveMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  undoMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedRemoveMarkAsFinished({
+                  showSnackBar: false
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedRemoveMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+  undoRemoveMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoRemoveMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedMarkAsFinished({
+                  showSnackBar: false
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedMarkAsFinished({
+            item
           });
         }
       })

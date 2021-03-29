@@ -31,11 +31,7 @@ export class ReadingListService {
 
   async updateMarkedAsRead(id: string, item: ReadingListItem): Promise<void> {
     this.storage.update(list => {
-      const index = list.findIndex(x => x.bookId === id);
-      if (index > -1) {
-        list[index] = item;
-      }
-      return list;
+      return list.map(book => (book.bookId === id ? item : book));
     });
   }
 }

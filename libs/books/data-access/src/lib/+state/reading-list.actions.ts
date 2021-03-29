@@ -43,22 +43,47 @@ export const confirmedRemoveFromReadingList = createAction(
   props<{ item: ReadingListItem }>()
 );
 
-export const updateMarkAsFinished = createAction(
-  '[Reading List] Update Mark as Finished',
+export const MarkAsFinished = createAction(
+  '[Reading List] Mark as Finished',
   props<{ item: ReadingListItem }>()
 );
 
-export const confirmedUpdateMarkAsFinished = createAction(
-  '[Reading List] Confirmed Update Mark as Finished',
-  props<{ item: Update<ReadingListItem> }>()
-);
-
-export const undoUpdateMarkAsFinished = createAction(
-  '[Reading List] Undo Update Mark as Finished',
+export const RemoveMarkAsFinished = createAction(
+  '[Reading List] Remove Mark as Finished',
   props<{ item: ReadingListItem }>()
 );
 
-export const failedUpdateMarkAsFinished = createAction(
-  '[Reading List] Failed Update Mark as Finished',
-  props<{ item: Update<ReadingListItem> }>()
+export const confirmedMarkAsFinished = createAction(
+  '[Reading List] Confirmed  Mark as Finished',
+  props<{ showSnackBar?: boolean }>()
+);
+
+export const confirmedRemoveMarkAsFinished = createAction(
+  '[Reading List] Confirmed Remove Mark as Finished',
+  props<{ showSnackBar: boolean }>()
+);
+
+export const failedMarkAsFinished = createAction(
+  '[Reading List] Failed Mark as Finished',
+  props<{ item: ReadingListItem }>()
+);
+
+export const failedRemoveMarkAsFinished = createAction(
+  '[Reading List] Failed Remove Mark as Finished',
+  props<{ item: ReadingListItem }>()
+);
+
+export const toggleShowSnackBar = createAction(
+  '[Reading List] toggle show Snack Bar',
+  props<{ status: boolean }>()
+);
+
+export const undoMarkAsFinished = createAction(
+  '[Reading List] Undo Mark As Finished',
+  props<{ item: ReadingListItem }>()
+);
+
+export const undoRemoveMarkAsFinished = createAction(
+  '[Reading List] Undo Remove Mark As Finished',
+  props<{ item: ReadingListItem }>()
 );
