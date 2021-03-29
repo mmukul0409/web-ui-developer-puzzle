@@ -24,7 +24,7 @@ export const failedAddToReadingList = createAction(
 
 export const confirmedAddToReadingList = createAction(
   '[Reading List] Confirmed add to list',
-  props<{ book: Book }>()
+  props<{ book: Book; showAddSnackBar?: boolean }>()
 );
 
 export const removeFromReadingList = createAction(
@@ -39,7 +39,7 @@ export const failedRemoveFromReadingList = createAction(
 
 export const confirmedRemoveFromReadingList = createAction(
   '[Reading List] Confirmed remove from list',
-  props<{ item: ReadingListItem }>()
+  props<{ item: ReadingListItem; showRemoveSnackBar?: boolean }>()
 );
 
 export const undoAddToReadingList = createAction(
@@ -50,4 +50,14 @@ export const undoAddToReadingList = createAction(
 export const undoRemoveFromReadingList = createAction(
   '[Reading List] Undo Remove from list',
   props<{ book: Book }>()
+);
+
+export const toggleAddSnackBar = createAction(
+  '[Reading List] Toggle add  snackbar',
+  props<{ status: boolean }>()
+);
+
+export const toggleRemoveSnackBar = createAction(
+  '[Reading List] Toggle  remove snackbar',
+  props<{ status: boolean }>()
 );
