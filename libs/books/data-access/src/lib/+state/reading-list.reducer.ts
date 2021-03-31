@@ -9,6 +9,8 @@ export const READING_LIST_FEATURE_KEY = 'readingList';
 export interface State extends EntityState<ReadingListItem> {
   loaded: boolean;
   error: null | string;
+  showAddSnackBar: boolean;
+  showRemoveSnackBar: boolean;
 }
 
 export interface ReadingListPartialState {
@@ -23,7 +25,9 @@ export const readingListAdapter: EntityAdapter<ReadingListItem> = createEntityAd
 
 export const initialState: State = readingListAdapter.getInitialState({
   loaded: false,
-  error: null
+  error: null,
+  showRemoveSnackBar: false,
+  showAddSnackBar: false
 });
 
 const readingListReducer = createReducer(
@@ -47,9 +51,45 @@ const readingListReducer = createReducer(
       error: action.error
     };
   }),
-  on(ReadingListActions.addToReadingList, (state, action) =>
-    readingListAdapter.addOne({ bookId: action.book.id, ...action.book }, state)
-  ),
+  on(ReadingListActions.addToReadingList, (state, action) => {
+    return readingListAdapter.addOne(
+      { bookId: action.book.id, ...action.book },
+      state
+    );
+  }),
+  on(ReadingListActions.confirmedAddToReadingList, (state, action) => {
+    return {
+      ...state,
+      showAddSnackBar: action.showAddSnackBar ? action.showAddSnackBar : false
+    };
+  }),
+  on(ReadingListActions.confirmedRemoveFromReadingList, (state, action) => {
+    return {
+      ...state,
+      showRemoveSnackBar: action.showRemoveSnackBar
+        ? action.showRemoveSnackBar
+        : false
+    };
+  }),
+  on(ReadingListActions.undoAddToReadingList, (state, action) => {
+    const updatedState = {
+      ...state,
+      showAddSnackBar: false,
+      showRemoveSnackBar: false
+    };
+    return readingListAdapter.removeOne(action.item.bookId, updatedState);
+  }),
+  on(ReadingListActions.undoRemoveFromReadingList, (state, action) => {
+    const updatedState = {
+      ...state,
+      showAddSnackBar: false,
+      showRemoveSnackBar: false
+    };
+    return readingListAdapter.addOne(
+      { bookId: action.book.id, ...action.book },
+      updatedState
+    );
+  }),
   on(ReadingListActions.removeFromReadingList, (state, action) =>
     readingListAdapter.removeOne(action.item.bookId, state)
   ),
@@ -58,7 +98,19 @@ const readingListReducer = createReducer(
   ),
   on(ReadingListActions.failedRemoveFromReadingList, (state, action) =>
     readingListAdapter.addOne(action.item, state)
-  )
+  ),
+  on(ReadingListActions.toggleAddSnackBar, (state, action) => {
+    return {
+      ...state,
+      showAddSnackBar: action.status
+    };
+  }),
+  on(ReadingListActions.toggleRemoveSnackBar, (state, action) => {
+    return {
+      ...state,
+      showRemoveSnackBar: action.status
+    };
+  })
 );
 
 export function reducer(state: State | undefined, action: Action) {

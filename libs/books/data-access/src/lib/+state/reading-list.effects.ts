@@ -37,6 +37,29 @@ export class ReadingListEffects implements OnInitEffects {
           return this.http.post('/api/reading-list', book).pipe(
             map(() =>
               ReadingListActions.confirmedAddToReadingList({
+                book,
+                showAddSnackBar: true
+              })
+            )
+          );
+        },
+        undoAction: ({ book }) => {
+          return ReadingListActions.failedAddToReadingList({
+            book
+          });
+        }
+      })
+    )
+  );
+
+  undoRemoveBook$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoRemoveFromReadingList),
+      optimisticUpdate({
+        run: ({ book }) => {
+          return this.http.post('/api/reading-list', book).pipe(
+            map(() =>
+              ReadingListActions.confirmedAddToReadingList({
                 book
               })
             )
@@ -54,6 +77,29 @@ export class ReadingListEffects implements OnInitEffects {
   removeBook$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ReadingListActions.removeFromReadingList),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http.delete(`/api/reading-list/${item.bookId}`).pipe(
+            map(() =>
+              ReadingListActions.confirmedRemoveFromReadingList({
+                item,
+                showRemoveSnackBar: true
+              })
+            )
+          );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedRemoveFromReadingList({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  undoAddBook$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoAddToReadingList),
       optimisticUpdate({
         run: ({ item }) => {
           return this.http.delete(`/api/reading-list/${item.bookId}`).pipe(

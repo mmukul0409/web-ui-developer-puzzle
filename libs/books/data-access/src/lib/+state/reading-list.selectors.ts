@@ -41,3 +41,14 @@ export const getAllBooks = createSelector<
 export const getReadingList = createSelector(getReadingListState, selectAll);
 
 export const getTotalUnread = createSelector(getReadingListState, selectTotal);
+
+export const getShowAddSnackBar = createSelector(getReadingListState, state => {
+  return state.showAddSnackBar;
+});
+
+export const getShowRemoveSnackBar = createSelector(
+  getReadingListState,
+  state => {
+    return state.showRemoveSnackBar;
+  }
+);
