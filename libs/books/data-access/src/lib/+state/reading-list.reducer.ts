@@ -9,6 +9,7 @@ export const READING_LIST_FEATURE_KEY = 'readingList';
 export interface State extends EntityState<ReadingListItem> {
   loaded: boolean;
   error: null | string;
+  showSnackBar: boolean;
 }
 
 export interface ReadingListPartialState {
@@ -23,7 +24,8 @@ export const readingListAdapter: EntityAdapter<ReadingListItem> = createEntityAd
 
 export const initialState: State = readingListAdapter.getInitialState({
   loaded: false,
-  error: null
+  error: null,
+  showSnackBar: false
 });
 
 const readingListReducer = createReducer(
@@ -47,6 +49,59 @@ const readingListReducer = createReducer(
       error: action.error
     };
   }),
+  on(ReadingListActions.MarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
+  on(ReadingListActions.confirmedMarkAsFinished, (state, action) => {
+    return {
+      ...state,
+      showSnackBar: action.showSnackBar
+    };
+  }),
+  on(ReadingListActions.failedMarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item,
+        finished: false,
+        finishedDate: null
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
+
+  on(ReadingListActions.RemoveMarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
+  on(ReadingListActions.confirmedRemoveMarkAsFinished, (state, action) => {
+    return {
+      ...state,
+      showSnackBar: action.showSnackBar
+    };
+  }),
+  on(ReadingListActions.failedRemoveMarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item,
+        finished: true,
+        finishedDate: new Date().toISOString()
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
   on(ReadingListActions.addToReadingList, (state, action) =>
     readingListAdapter.addOne({ bookId: action.book.id, ...action.book }, state)
   ),
@@ -58,7 +113,31 @@ const readingListReducer = createReducer(
   ),
   on(ReadingListActions.failedRemoveFromReadingList, (state, action) =>
     readingListAdapter.addOne(action.item, state)
-  )
+  ),
+  on(ReadingListActions.undoMarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
+  on(ReadingListActions.undoRemoveMarkAsFinished, (state, action) => {
+    const updatedItem = {
+      id: action.item.bookId,
+      changes: {
+        ...action.item
+      }
+    };
+    return readingListAdapter.updateOne(updatedItem, state);
+  }),
+  on(ReadingListActions.toggleShowSnackBar, (state, action) => {
+    return {
+      ...state,
+      showSnackBar: action.status
+    };
+  })
 );
 
 export function reducer(state: State | undefined, action: Action) {

@@ -73,6 +73,101 @@ export class ReadingListEffects implements OnInitEffects {
     )
   );
 
+  markAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.MarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedMarkAsFinished({
+                  showSnackBar: true
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  removeMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.RemoveMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedRemoveMarkAsFinished({
+                  showSnackBar: true
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedRemoveMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+
+  undoMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedRemoveMarkAsFinished({
+                  showSnackBar: false
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedRemoveMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+  undoRemoveMarkAsFinished$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ReadingListActions.undoRemoveMarkAsFinished),
+      optimisticUpdate({
+        run: ({ item }) => {
+          return this.http
+            .put(`/api/reading-list/${item.bookId}/finished`, item)
+            .pipe(
+              map(() => {
+                return ReadingListActions.confirmedMarkAsFinished({
+                  showSnackBar: false
+                });
+              })
+            );
+        },
+        undoAction: ({ item }) => {
+          return ReadingListActions.failedMarkAsFinished({
+            item
+          });
+        }
+      })
+    )
+  );
+
   ngrxOnInitEffects() {
     return ReadingListActions.loadReadingList();
   }
